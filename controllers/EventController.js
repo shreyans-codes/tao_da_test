@@ -3,6 +3,8 @@ const Event = require("../models/Event");
 const redis = require("../services/redis"); // Redis caching service
 const App = require("../models/App");
 
+const redisClient = require("../services/redis");
+
 exports.collectEvent = async (req, res) => {
   try {
     const {
@@ -31,9 +33,6 @@ exports.collectEvent = async (req, res) => {
       userId: userId,
     });
 
-    // Cache event if necessary
-    // redis.cacheEvent(event);
-
     res.status(201).json({ message: "Event collected successfully", newEvent });
   } catch (error) {
     res.status(500).json({ message: "Error collecting event", error });
@@ -41,8 +40,19 @@ exports.collectEvent = async (req, res) => {
 };
 
 exports.getAnalytics = async (req, res) => {
+  const { event, startDate, endDate, app_id } = req.query;
+
+  const cacheKey = `analytics:${event ? event : ""}:${app_id ? app_id : ""}:${
+    startDate ? startDate : ""
+  }:${endDate ? endDate : ""}`;
+
   try {
-    const { event, startDate, endDate, app_id } = req.query;
+    const cachedData = await redisClient.GET(cacheKey);
+    if (cachedData) {
+      console.log("Cache hit!");
+      // return cached data if found
+      return res.json(JSON.parse(cachedData));
+    }
 
     const userApps = await App.findAll({
       where: { user_id: req.userId },
@@ -76,23 +86,21 @@ exports.getAnalytics = async (req, res) => {
       return acc;
     }, {});
 
-    // Send summary response
-    res.json({
+    const analyticsData = {
       event,
       count: eventCount,
       uniqueUsers,
       deviceData,
-    });
+    };
+    await redisClient.set(
+      cacheKey,
+      JSON.stringify(analyticsData),
+      "EX",
+      60 * 60
+    );
 
-    // const analyticsData = await redis.getCachedAnalytics();
-
-    // if (analyticsData) {
-    //   return res.json(analyticsData);
-    // }
-
-    // Fallback to database aggregation if no cache
-    // const data = await Event.aggregateAnalyticsData();
-    // redis.cacheAnalytics(data);
+    // Send summary response
+    res.json(analyticsData);
   } catch (error) {
     console.error("Error fetching analytics", error);
     res.status(500).json({ message: "Error fetching analytics", error });
@@ -100,8 +108,14 @@ exports.getAnalytics = async (req, res) => {
 };
 
 exports.getUserStats = async (req, res) => {
+  const { userId } = req.query;
+  const cacheKey = `userStats:${userId}`;
   try {
-    const { userId } = req.query;
+    const cachedData = await redisClient.GET(cacheKey);
+    if (cachedData) {
+      console.log("Cache hit!");
+      return res.json(JSON.parse(cachedData));
+    }
 
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
@@ -144,6 +158,7 @@ exports.getUserStats = async (req, res) => {
       },
       recentEvents,
     };
+    await redisClient.set(cacheKey, JSON.stringify(response), "EX", 60 * 60);
 
     res.json(response);
   } catch (error) {

@@ -1,19 +1,17 @@
 const redis = require("redis");
-const client = redis.createClient();
+const client = redis.createClient({
+  host: "localhost",
+  port: 6379,
+});
 
-module.exports = {
-  cacheEvent: (event) => {
-    client.setex(`event:${event.id}`, 3600, JSON.stringify(event));
-  },
-  getCachedAnalytics: async () => {
-    return new Promise((resolve, reject) => {
-      client.get("analytics", (err, data) => {
-        if (err) reject(err);
-        resolve(data ? JSON.parse(data) : null);
-      });
-    });
-  },
-  cacheAnalytics: (data) => {
-    client.setex("analytics", 3600, JSON.stringify(data));
-  },
-};
+client.connect();
+
+client.on("connect", () => {
+  console.log("Redis client connected");
+});
+
+client.on("error", (err) => {
+  console.error("Error in Redis client:", err);
+});
+
+module.exports = client;
