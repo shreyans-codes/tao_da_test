@@ -1,0 +1,45 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Website Analytics API",
+      "version": "1.0.0",
+      "description": "API to collect and analyze website analytics data."
+    },
+    "paths": {
+      "/events": {
+        "post": {
+          "summary": "Collect event data",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "event_type": {
+                      "type": "string"
+                    },
+                    "user_id": {
+                      "type": "string"
+                    },
+                    "device": {
+                      "type": "string"
+                    },
+                    "referrer": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Event collected successfully"
+            }
+          }
+        }
+      }
+    }
+  }
+  

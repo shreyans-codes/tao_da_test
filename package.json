@@ -1,0 +1,32 @@
+{
+  "name": "data-analytics",
+  "version": "1.0.0",
+  "description": "A scalable backend API for website analytics, supporting event collection, aggregation, and reporting.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest",
+    "lint": "eslint . --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "google-auth-library": "^9.15.1",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.0",
+    "rate-limiter-flexible": "^6.2.0",
+    "redis": "^4.7.0",
+    "sequelize": "^6.37.6",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.1.0"
+  }
+}
