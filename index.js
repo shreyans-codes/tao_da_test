@@ -3,12 +3,11 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger/swagger.json");
-const { RateLimiterMemory } = require("rate-limiter-flexible");
+
 const { sequelize } = require("./models");
 const path = require("path");
 const apiRoutes = require("./routes/apiRoutes");
-const { OAuth2Client } = require("google-auth-library");
-const rateLimiter = require("./middleware/rateLimiter");
+
 require("dotenv").config();
 
 const app = express();
@@ -42,13 +41,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/", apiRoutes);
-
-// const rateLimiter = new RateLimiterMemory({
-//   points: 100, // 100 requests
-//   duration: 15 * 60, // per 15 minutes
-// });
-
-app.use(rateLimiter);
 
 // sync DB and start the server
 sequelize.sync().then(() => {

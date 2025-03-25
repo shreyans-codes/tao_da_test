@@ -6,7 +6,7 @@ const rateLimiter = new RateLimiterMemory({
 
 module.exports = async (req, res, next) => {
   try {
-    await rateLimiter.consume(req.ip);
+    await rateLimiter.consume(req.appId);
     next();
   } catch (rejRes) {
     res.status(429).json({ message: "Too many requests, try again later." });

@@ -1,4 +1,5 @@
-const { APIKey } = require("../models/APIKey");
+const APIKey = require("../models/APIKey");
+const App = require("../models/App");
 
 const checkAPIKey = async (req, res, next) => {
   const apiKey = req.headers["authorization"];
@@ -16,6 +17,16 @@ const checkAPIKey = async (req, res, next) => {
 
     if (new Date(key.expired_at) < new Date()) {
       return res.status(401).json({ message: "API Key has expired" });
+    }
+
+    req.appId = key.app_id;
+
+    const app = await App.findOne({ where: { id: key.app_id } });
+
+    if (app) {
+      req.appName = app.name;
+      req.appId = app.id;
+      req.userId = app.user_id;
     }
 
     next();

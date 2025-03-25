@@ -1,4 +1,5 @@
 const App = require("../models/App");
+const ApiKeyController = require("../controllers/APIKeyController");
 
 exports.registerApp = async (req, res) => {
   try {
@@ -13,8 +14,14 @@ exports.registerApp = async (req, res) => {
       name,
       user_id: userId,
     });
+
+    const newKey = await ApiKeyController.createAPIKeyForApp({
+      appId: newApp.id,
+    });
+
     res.status(201).json({
       message: "App registered successfully",
+      token: newKey.key,
       app: newApp,
     });
   } catch (error) {
