@@ -7,6 +7,8 @@ const specs = require("./swagger");
 const { sequelize } = require("./models");
 const path = require("path");
 const apiRoutes = require("./routes/apiRoutes");
+const App = require("./models/App");
+const User = require("./models/User");
 
 require("dotenv").config();
 
@@ -43,9 +45,12 @@ app.get("/", (req, res) => {
 app.use("/", apiRoutes);
 
 // sync DB and start the server
-sequelize.sync().then(() => {
+sequelize.sync({ force: false }).then(() => {
   console.log("Database synced");
-  app.listen(3000, () => {
-    console.log("Server is running on port 3000");
+  App.belongsTo(User, { foreignKey: "user_id" });
+  App.sync({ alter: true }).then(() => {
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000");
+    });
   });
 });

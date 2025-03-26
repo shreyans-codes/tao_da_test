@@ -2,7 +2,7 @@ const { Sequelize } = require("sequelize");
 
 // connect with mysql
 const sequelize = new Sequelize(
-  "mysql://root:password@localhost:3306/data_analytics",
+  "mysql://root:password@db:3306/data_analytics",
   {
     dialect: "mysql",
     logging: false,
