@@ -1,8 +1,11 @@
 const { Sequelize } = require("sequelize");
+require("dotenv").config();
+
+const dbHost = process.env.DOCKER_ENV === "true" ? "db" : "localhost";
 
 // connect with mysql
 const sequelize = new Sequelize(
-  "mysql://root:password@db:3306/data_analytics",
+  `mysql://root:password@${dbHost}:3306/data_analytics`,
   {
     dialect: "mysql",
     logging: false,

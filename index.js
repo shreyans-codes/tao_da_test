@@ -7,6 +7,8 @@ const specs = require("./swagger");
 const { sequelize } = require("./models");
 const path = require("path");
 const apiRoutes = require("./routes/apiRoutes");
+const authRoutes = require("./routes/authRoutes");
+const eventRoutes = require("./routes/eventRoutes");
 const App = require("./models/App");
 const User = require("./models/User");
 
@@ -43,6 +45,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/", apiRoutes);
+app.use("/", authRoutes);
+app.use("/", eventRoutes);
 
 // sync DB and start the server
 sequelize.sync({ force: false }).then(() => {

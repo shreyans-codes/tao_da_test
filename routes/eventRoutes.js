@@ -1,6 +1,7 @@
 const express = require("express");
 const EventController = require("../controllers/EventController");
 const rateLimiter = require("../middleware/rateLimiter");
+const checkAPIKey = require("../middleware/ApiKeyCheck");
 
 const router = express.Router();
 // Event Collection Routes
@@ -232,3 +233,5 @@ router.get(
   rateLimiter,
   EventController.getUserStats
 );
+
+module.exports = router;

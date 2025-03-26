@@ -1,7 +1,10 @@
 const redis = require("redis");
+require("dotenv").config();
+
+const redisHost = process.env.REDIS_HOST || "localhost"; // Default to localhost
+
 const client = redis.createClient({
-  host: "localhost",
-  port: 6379,
+  url: `redis://${redisHost}:6379`,
 });
 
 client.connect();
@@ -11,7 +14,7 @@ client.on("connect", () => {
 });
 
 client.on("error", (err) => {
-  console.error("Error in Redis client:", err);
+  console.error("Error in Redis client:", err, redisHost);
 });
 
 module.exports = client;
