@@ -1,0 +1,7 @@
+- Copy .env.example contents into a .env file
+- Create a database called data_analytics on mysql
+- Run redis on port 6379
+- To start, run: `npm run start`
+- The application runs on port 3000, visit there to login via google
+- Use the token to create an App and an API Key
+- Use the API key in the Authorization header for subsequent requests
